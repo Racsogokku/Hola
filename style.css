@@ -1,0 +1,28 @@
+body {
+    font-family: 'Varela Round', sans-serif;
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    overflow: hidden; /* Evitar scroll cuando el botón crece mucho */
+}
+
+.bg-romantic {
+    background: linear-gradient(to bottom right, #ffafbd, #ffc3a0);
+}
+
+.floating-heart {
+    position: absolute;
+    color: #e11d48;
+    animation: float 4s ease-in-out infinite;
+    opacity: 0;
+    z-index: 0;
+}
+
+@keyframes float {
+    0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+}
+
+/* Transiciones suaves para los botones */
+#yesBtn, #noBtn {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
