@@ -1,85 +1,136 @@
+// 1. Selección de elementos del DOM
 const noBtn = document.getElementById('noBtn');
 const yesBtn = document.getElementById('yesBtn');
 const mascot = document.getElementById('mascot');
 const mainCard = document.getElementById('main-card');
 const successScreen = document.getElementById('success-screen');
 
-// Frases para dar pena cuando dan click a NO
+// ---------------------------------------------------------
+// 2. CONFIGURACIÓN ACTUALIZADA DE GOOGLE FORMS
+// ---------------------------------------------------------
+// Nota: La URL debe terminar en 'formResponse', no en 'viewform'
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdP0d4vuBPY_hS8B71-zqEHX7bj65QJxKvOxi3UgzPtEyC7OA/formResponse";
+
+// Este es el ID que saqué de tu enlace:
+const ENTRY_ID = "entry.652535723"; 
+
+/**
+ * Envía la respuesta a Google Forms.
+ * Se usa 'no-cors' por lo que no verás respuesta en la consola, 
+ * pero el dato se enviará si la conexión es correcta.
+ */
+function enviarRespuesta(valor) {
+    const formData = new FormData();
+    formData.append(ENTRY_ID, valor);
+
+    fetch(FORM_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: formData
+    }).then(() => {
+        console.log("Intento de envío: " + valor);
+    }).catch(err => {
+        console.error("Error de red", err);
+    });
+}
+// ---------------------------------------------------------
+
+// 3. Lógica de frases y contador
 const sadPhrases = [
-    "No", // Default
-    "¿Estás segura?",
-    "¿De verdad?",
+    "No", 
+    "¿Estás segura? 🥺", 
+    "¿De verdad? 💔", 
     "¡Piénsalo bien!",
-    "Me romperás el corazón 💔",
-    "¡Voy a llorar!",
+    "Me romperás el corazón...", 
+    "¡Voy a llorar! 😭", 
     "No seas así...",
-    "¡Por favor!",
-    "¡Me muero de tristeza!",
-    "Mira que eres mal@...",
+    "¡Por favor! 🙏", 
+    "¡Me muero de tristeza!", 
+    "Mira que eres mala...",
     "Ok, ya no pregunto más..."
 ];
 
 let clickCount = 0;
 
+/**
+ * Función que se ejecuta al pulsar (o intentar pulsar) el botón NO
+ */
 function rejectLove() {
     clickCount++;
+    
+    // Enviamos el aviso de que intentó decir que NO
+    enviarRespuesta(`No`);
 
-    // Cambiar el texto del botón NO
+    // Cambiar el texto del botón NO según el array de frases
     if (clickCount < sadPhrases.length) {
         noBtn.innerText = sadPhrases[clickCount];
     } else {
-        noBtn.innerText = "Adiós mundo cruel...";
-        noBtn.style.display = 'none';
+        noBtn.innerText = ""; 
+        noBtn.style.display = 'none'; // Desaparece tras agotar frases
     }
 
-    // Hacer el botón NO más pequeño
-    const newScaleNo = 1 - (clickCount * 0.1);
-    noBtn.style.transform = `scale(${Math.max(0, newScaleNo)})`;
-    
-    // Hacer el botón SÍ más grande
+    // Efectos de escala: el NO se achica, el SÍ crece
+    const newScaleNo = Math.max(0, 1 - (clickCount * 0.1));
     const newScaleYes = 1 + (clickCount * 0.4);
+    
+    noBtn.style.transform = `scale(${newScaleNo})`;
     yesBtn.style.transform = `scale(${newScaleYes})`;
     
-    // --- AQUÍ ESTÁ EL CAMBIO ---
-    // Cambiar imagen del osito al triste que pediste
+    // Al primer rechazo, cambiamos la mascota por una que llora
     if (clickCount === 1) {
-        // He usado un enlace directo fiable de Mocha llorando
+        // Asegúrate de que esta imagen cargue bien o usa una local
         mascot.src = "https://media.tenor.com/Qu6GUg0Yx90AAAAi/mocha-cry.gif"; 
     }
 }
 
+/**
+ * Función que se ejecuta al pulsar el botón SÍ
+ */
 function acceptLove() {
+    // Enviamos la confirmación final a Google Forms
+    enviarRespuesta("Si");
+
+    // Cambiamos de pantalla
     mainCard.style.display = 'none';
     successScreen.classList.remove('hidden');
     successScreen.classList.add('flex');
-    createHearts();
+    
+    // Lanzamos la explosión de corazones
+    createHeartsExplosion();
 }
 
-function createHearts() {
-    const container = document.getElementById('success-screen');
+/**
+ * Crea una lluvia de corazones al aceptar
+ */
+function createHeartsExplosion() {
+    const container = document.body;
     for (let i = 0; i < 50; i++) {
         const heart = document.createElement('div');
         heart.innerHTML = '❤️';
         heart.classList.add('floating-heart');
         heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.animationDuration = Math.random() * 3 + 2 + 's';
-        heart.style.fontSize = Math.random() * 2 + 1 + 'rem';
+        heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+        heart.style.zIndex = "100";
         container.appendChild(heart);
+        
+        setTimeout(() => heart.remove(), 5000);
     }
 }
 
+// Lluvia constante de fondo
 setInterval(() => {
     const container = document.getElementById('hearts-container');
+    if (!container) return;
+    
     const heart = document.createElement('div');
     heart.innerHTML = '💖';
     heart.classList.add('floating-heart');
     heart.style.left = Math.random() * 100 + 'vw';
-    heart.style.animationDuration = Math.random() * 10 + 5 + 's';
+    heart.style.animationDuration = (Math.random() * 10 + 5) + 's';
     heart.style.fontSize = '1.5rem';
     heart.style.opacity = '0.3';
     container.appendChild(heart);
     
-    setTimeout(() => {
-        heart.remove();
-    }, 15000);
+    setTimeout(() => heart.remove(), 15000);
 }, 1000);
