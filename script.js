@@ -55,7 +55,7 @@ let clickCount = 0;
 /**
  * Función que se ejecuta al pulsar (o intentar pulsar) el botón NO
  */
-/*
+
 function rejectLove() {
     clickCount++;
     
@@ -83,7 +83,7 @@ function rejectLove() {
         mascot.src = "https://media.tenor.com/Qu6GUg0Yx90AAAAi/mocha-cry.gif"; 
     }
 }
-    */
+    /*
    function rejectLove() {
     // Enviamos la confirmación final a Google Forms
     enviarRespuesta("No");
@@ -96,6 +96,7 @@ function rejectLove() {
     // Lanzamos la explosión de corazones
     
 }
+    */
 
 /**
  * Función que se ejecuta al pulsar el botón SÍ
